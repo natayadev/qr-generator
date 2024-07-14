@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de QR</title>
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 20px;
+            background-color: #f6f8fa;
+            color: #24292e;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-shadow: none;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #6a0dad;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #8a2be2;
+        }
+
+        canvas {
+            margin: 20px 0;
+            border: 1px solid #000000;
+        }
+
+        a {
+            padding: 10px 20px;
+            background-color: #9400d3;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 16px;
+            display: none;
+        }
+
+        a:hover {
+            background-color: #9932cc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Generador de QR</h1>
+    <input type="text" id="link-input" placeholder="Enter link here">
+    <button onclick="generateQRCode()">Generar</button>
+    <br>
+    <canvas id="qr-canvas" width="300" height="300" style="border:1px solid #00000000;"></canvas>
+    <br>
+    <a id="qr-link" href="#" download="qrcode.png" style="display:none;">Descargar</a>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+    <script>
+        function generateQRCode() {
+            const link = document.getElementById("link-input").value;
+            const canvas = document.getElementById("qr-canvas");
+            const ctx = canvas.getContext("2d");
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (!link) {
+                alert("Please enter a link.");
+                return;
+            }
+
+            const tempDiv = document.createElement("div");
+
+            const qrCode = new QRCode(tempDiv, {
+                text: link,
+                width: 300,
+                height: 300,
+                colorDark: "#000", // Color of the QR code
+                colorLight: "#fff" // Background color
+            });
+
+            setTimeout(() => {
+                const tempCanvas = tempDiv.querySelector("canvas");
+                if (tempCanvas) {
+                    ctx.drawImage(tempCanvas, 0, 0);
+                    const dataUrl = canvas.toDataURL("image/png");
+                    const qrLink = document.getElementById("qr-link");
+                    qrLink.href = dataUrl;
+                    qrLink.style.display = "inline";
+                } else {
+                    alert("Failed to generate QR code.");
+                }
+            }, 100);
+        }
+    </script>
+</body>
+</html>
